@@ -1,30 +1,19 @@
-# Estoque por Conversa Contínua + Código Opcional + Excel
+# Estoque V3 — Excel Completo
 
-Fluxo:
-- Clique em Iniciar conversa
-- O sistema fala a pergunta
-- O microfone liga sozinho
-- Você responde
-- Ele avança automaticamente
-- Na revisão, responda "sim" para salvar ou "não" para corrigir
+Campos perguntados:
+- Produto
+- Categoria
+- Local
+- Código de Barras opcional
+- Lote
+- Vencimento
+- Estoque
+- Estoque padrão
+- Limite alerta
 
-Segue o Excel atualizado:
-- Aba: Relatório
-- Cabeçalho: linha 4
-- Estoque = quantidade
-- Vencimento = validade
-- Soma por Produto + Lote
+Campos mantidos para preenchimento manual depois:
+- Aberto em
+- Vence após aberto
+- Status
 
-## Rodar
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
-```
-
-Acesse:
-```txt
-http://127.0.0.1:5000
-```
+Mantém biblioteca automática de produtos, confirmação por voz e soma por Produto + Lote.

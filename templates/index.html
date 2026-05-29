@@ -2,83 +2,64 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Estoque Conversa Contínua</title>
+  <title>Estoque V3 Completo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <script src="https://unpkg.com/html5-qrcode"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <main class="container">
     <section class="card">
-      <h1>Estoque por Conversa</h1>
-      <p class="subtitle">Clique em iniciar uma vez. Depois o sistema pergunta, escuta e avança sozinho.</p>
+      <h1>Estoque V3</h1>
+      <p class="subtitle">Pergunta os campos necessários para importar no sistema.</p>
 
       {% with messages = get_flashed_messages() %}
         {% if messages %}
-          <div class="alert">
-            {% for message in messages %}
-              <p>{{ message }}</p>
-            {% endfor %}
-          </div>
+          <div class="alert">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>
         {% endif %}
       {% endwith %}
 
       <form action="{{ url_for('salvar') }}" method="POST" id="formEstoque">
-        <div class="progress">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 
         <div class="step active" data-step="0">
           <h2>Código de barras</h2>
-
           <div id="reader" class="reader hidden"></div>
-
           <button type="button" id="btnScanner" class="btn-primary">📷 Ler código com câmera</button>
           <button type="button" id="btnSemCodigo" class="btn-secondary">⏭️ Continuar sem código</button>
           <button type="button" id="btnPararScanner" class="btn-secondary hidden">Fechar câmera</button>
-
           <label>Código de barras opcional</label>
           <input name="codigo_barras" id="codigo_barras" value="{{ item.codigo_barras if item else '' }}" inputmode="numeric">
         </div>
 
-        <div class="step" data-step="1">
-          <h2>Produto</h2>
-          <input name="produto" id="produto" value="{{ item.produto if item else '' }}" required>
-        </div>
+        <div class="step" data-step="1"><h2>Produto</h2><input name="produto" id="produto" value="{{ item.produto if item else '' }}" required><div id="produtoSugestao" class="suggestion hidden"></div></div>
+        <div class="step" data-step="2"><h2>Categoria</h2><input name="categoria" id="categoria" value="{{ item.categoria if item else '' }}" required></div>
+        <div class="step" data-step="3"><h2>Local</h2><input name="local" id="local" value="{{ item.local if item else '' }}" required></div>
+        <div class="step" data-step="4"><h2>Lote</h2><input name="lote" id="lote" value="{{ item.lote if item else '' }}" required></div>
+        <div class="step" data-step="5"><h2>Vencimento</h2><input name="validade" id="validade" value="{{ item.validade if item else '' }}" placeholder="DD/MM/AAAA" required></div>
+        <div class="step" data-step="6"><h2>Estoque</h2><input name="quantidade" id="quantidade" value="{{ item.quantidade if item else '' }}" type="number" min="1" step="1" required></div>
+        <div class="step" data-step="7"><h2>Estoque padrão</h2><input name="estoque_padrao" id="estoque_padrao" value="{{ item.estoque_padrao if item else '' }}" type="number" min="0" step="1" required></div>
+        <div class="step" data-step="8"><h2>Limite alerta</h2><input name="limite_alerta" id="limite_alerta" value="{{ item.limite_alerta if item else '' }}" type="number" min="0" step="1" required></div>
 
-        <div class="step" data-step="2">
-          <h2>Estoque</h2>
-          <input name="quantidade" id="quantidade" value="{{ item.quantidade if item else '' }}" type="number" min="1" step="1" required>
-        </div>
-
-        <div class="step" data-step="3">
-          <h2>Lote</h2>
-          <input name="lote" id="lote" value="{{ item.lote if item else '' }}" required>
-        </div>
-
-        <div class="step" data-step="4">
-          <h2>Vencimento</h2>
-          <input name="validade" id="validade" value="{{ item.validade if item else '' }}" placeholder="DD/MM/AAAA" required>
-        </div>
-
-        <div class="step" data-step="5">
+        <div class="step" data-step="9">
           <h2>Confirmação</h2>
           <div class="review">
             <p><strong>Código:</strong> <span id="r_codigo"></span></p>
             <p><strong>Produto:</strong> <span id="r_produto"></span></p>
-            <p><strong>Estoque:</strong> <span id="r_quantidade"></span></p>
+            <p><strong>Categoria:</strong> <span id="r_categoria"></span></p>
+            <p><strong>Local:</strong> <span id="r_local"></span></p>
             <p><strong>Lote:</strong> <span id="r_lote"></span></p>
             <p><strong>Vencimento:</strong> <span id="r_validade"></span></p>
+            <p><strong>Estoque:</strong> <span id="r_quantidade"></span></p>
+            <p><strong>Estoque padrão:</strong> <span id="r_estoque_padrao"></span></p>
+            <p><strong>Limite alerta:</strong> <span id="r_limite_alerta"></span></p>
           </div>
           <button type="submit" class="btn-primary" id="btnSalvar">Salvar no Excel</button>
         </div>
 
         <p id="perguntaAtual" class="status"></p>
-
         <button type="button" id="btnIniciar" class="btn-primary">🎙️ Iniciar conversa</button>
         <button type="button" id="btnPausar" class="btn-secondary hidden">Pausar conversa</button>
-
         <div class="actions">
           <button type="button" id="btnVoltar" class="btn-secondary">Voltar</button>
           <button type="button" id="btnProximo" class="btn-primary">Próximo</button>
@@ -86,13 +67,8 @@
       </form>
 
       <a href="{{ url_for('download') }}" class="btn-link">Baixar Excel atualizado</a>
-
-      <div class="commands">
-        Respostas aceitas: <strong>sim</strong>, <strong>não</strong>, <strong>voltar</strong>, <strong>repetir</strong>, <strong>pausar</strong>.
-      </div>
     </section>
   </main>
-
   <script src="{{ url_for('static', filename='wizard.js') }}"></script>
 </body>
 </html>

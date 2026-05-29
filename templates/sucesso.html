@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Salvo com sucesso</title>
+  <title>Salvo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -10,16 +10,15 @@
   <main class="container">
     <section class="card success">
       <h1>Salvo no Excel</h1>
-
       <p><strong>Novos itens:</strong> {{ resultado.adicionados }}</p>
       <p><strong>Itens somados:</strong> {{ resultado.atualizados }}</p>
-
       <div class="review">
         <p><strong>Produto:</strong> {{ item.produto }}</p>
+        <p><strong>Categoria:</strong> {{ item.categoria }}</p>
+        <p><strong>Local:</strong> {{ item.local }}</p>
         <p><strong>Estoque lançado:</strong> {{ item.quantidade }}</p>
         <p><strong>Lote:</strong> {{ item.lote }}</p>
       </div>
-
       <a href="{{ url_for('index') }}" class="btn-primary">Cadastrar outro item</a>
       <a href="{{ url_for('download') }}" class="btn-secondary">Baixar Excel atualizado</a>
     </section>
