@@ -3,6 +3,7 @@ from copy import copy
 from datetime import datetime
 from openpyxl import load_workbook
 from services.normalizer_service import normalize_barcode, normalize_product, normalize_text, normalize_lote, normalize_date, make_key
+from services.supabase_storage_service import upload_excel
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 MODELO_PATH = os.path.join(BASE_DIR, "modelos", "produtos_2026-05-29.xlsx")
@@ -123,7 +124,17 @@ def save_items_to_excel(itens):
             existing[key] = row
             adicionados += 1
     wb.save(EXCEL_ATUAL_PATH)
-    return {"adicionados": adicionados, "atualizados": atualizados, "backup": backup}
+
+    supabase_ok, supabase_msg = upload_excel(EXCEL_ATUAL_PATH)
+    print(f"[Supabase] {supabase_msg}")
+
+    return {
+        "adicionados": adicionados,
+        "atualizados": atualizados,
+        "backup": backup,
+        "supabase_ok": supabase_ok,
+        "supabase_msg": supabase_msg,
+    }
 
 def find_product_by_barcode(codigo):
     ensure_workbook_exists()

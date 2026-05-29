@@ -3,6 +3,7 @@ import re
 from flask import Flask, render_template, request, send_file, flash, jsonify
 from services.excel_service import ensure_workbook_exists, save_items_to_excel, EXCEL_ATUAL_PATH, find_product_by_barcode
 from services.produto_matcher_service import suggest_product_name
+from services.supabase_storage_service import download_latest_excel
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 os.makedirs(os.path.join(BASE_DIR, "data"), exist_ok=True)
@@ -11,6 +12,16 @@ os.makedirs(os.path.join(BASE_DIR, "modelos"), exist_ok=True)
 
 app = Flask(__name__)
 app.secret_key = "troque-essa-chave-em-producao"
+
+def sincronizar_excel_na_inicializacao():
+    try:
+        from services.excel_service import EXCEL_ATUAL_PATH
+        ok, msg = download_latest_excel(EXCEL_ATUAL_PATH)
+        print(f"[Supabase] {msg}")
+    except Exception as exc:
+        print(f"[Supabase] Erro na sincronização inicial: {exc}")
+
+sincronizar_excel_na_inicializacao()
 
 @app.route("/")
 def index():

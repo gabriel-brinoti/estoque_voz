@@ -10,8 +10,16 @@
   <main class="container">
     <section class="card success">
       <h1>Salvo no Excel</h1>
+
       <p><strong>Novos itens:</strong> {{ resultado.adicionados }}</p>
       <p><strong>Itens somados:</strong> {{ resultado.atualizados }}</p>
+
+      {% if resultado.supabase_ok %}
+        <p class="status-ok">Backup Supabase: enviado com sucesso.</p>
+      {% else %}
+        <p class="status-warn">Backup Supabase: {{ resultado.supabase_msg }}</p>
+      {% endif %}
+
       <div class="review">
         <p><strong>Produto:</strong> {{ item.produto }}</p>
         <p><strong>Categoria:</strong> {{ item.categoria }}</p>
@@ -19,6 +27,7 @@
         <p><strong>Estoque lançado:</strong> {{ item.quantidade }}</p>
         <p><strong>Lote:</strong> {{ item.lote }}</p>
       </div>
+
       <a href="{{ url_for('index') }}" class="btn-primary">Cadastrar outro item</a>
       <a href="{{ url_for('download') }}" class="btn-secondary">Baixar Excel atualizado</a>
     </section>

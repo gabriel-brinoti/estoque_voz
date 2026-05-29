@@ -1,19 +1,16 @@
-# Estoque V3 — Excel Completo
+# Estoque V4 — Supabase Storage
 
-Campos perguntados:
-- Produto
-- Categoria
-- Local
-- Código de Barras opcional
-- Lote
-- Vencimento
-- Estoque
-- Estoque padrão
-- Limite alerta
+Agora o sistema:
+- Baixa o Excel mais recente do Supabase ao iniciar.
+- Atualiza o Excel local.
+- Envia automaticamente o Excel atualizado para o bucket `backups`.
+- Cria também uma cópia histórica em `historico/`.
 
-Campos mantidos para preenchimento manual depois:
-- Aberto em
-- Vence após aberto
-- Status
+Variáveis no Render:
 
-Mantém biblioteca automática de produtos, confirmação por voz e soma por Produto + Lote.
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_BACKUP_BUCKET=backups
+
+Arquivo principal salvo no Supabase:
+produtos_atualizado.xlsx
